@@ -22,7 +22,6 @@ class AlarmReciever : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val intent= Intent(context!!,DestActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         val pendingIntent = PendingIntent.getActivity(context!!,0,intent,PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -36,28 +35,11 @@ class AlarmReciever : BroadcastReceiver() {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
+                .build()
         }
 
-        with(NotificationManagerCompat.from(context)) {
-            // notificationId is a unique int for each notification that you must define
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return
-            }
-            if (builder != null) {
-                notify(System.currentTimeMillis().toInt(), builder.build())
-            }
-        }
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(123,builder)
 
 
     }
