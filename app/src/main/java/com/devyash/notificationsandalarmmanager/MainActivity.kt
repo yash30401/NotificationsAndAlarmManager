@@ -10,11 +10,12 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.TimePicker
 import android.widget.Toast
 import com.devyash.notificationsandalarmmanager.databinding.ActivityMainBinding
 import com.devyash.notificationsandalarmmanager.notifications.AlarmReciever
+import com.devyash.notificationsandalarmmanager.notifications.CounterNotificationService
 import com.devyash.notificationsandalarmmanager.others.Constants.CHANNELID
+import com.devyash.notificationsandalarmmanager.others.Counter
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.Calendar
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        val service = CounterNotificationService(applicationContext)
         createNotificationChannel()
 
         binding.btnSetTimer.setOnClickListener {
@@ -49,7 +50,12 @@ class MainActivity : AppCompatActivity() {
             cancelAlarm()
         }
 
+        binding.btnAdvanceNotif.setOnClickListener {
+            showAdvanceNotification(service)
+        }
+
     }
+
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -96,7 +102,6 @@ class MainActivity : AppCompatActivity() {
             // Perform any additional actions with the selected time
             Log.d("CALENDAR", calendar.get(Calendar.HOUR_OF_DAY).toString())
         }
-
 
     }
 
@@ -150,6 +155,10 @@ class MainActivity : AppCompatActivity() {
 
         alarmManager.cancel(pendingIntent)
         Toast.makeText(this, "Alarm Cancel Successfully", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showAdvanceNotification(service: CounterNotificationService) {
+        service.showNotification(Counter.count)
     }
 
     override fun onDestroy() {

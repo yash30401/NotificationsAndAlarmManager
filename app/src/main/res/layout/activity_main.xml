@@ -59,4 +59,15 @@
         app:layout_constraintEnd_toEndOf="@+id/btn_setAlarm"
         app:layout_constraintStart_toStartOf="@+id/btn_setAlarm"
         app:layout_constraintTop_toBottomOf="@+id/btn_setAlarm" />
+
+    <Button
+        android:id="@+id/btn_advanceNotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Advance Notification"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/btn_cancelAlarm"
+        app:layout_constraintStart_toStartOf="@+id/btn_cancelAlarm"
+        app:layout_constraintTop_toBottomOf="@+id/btn_cancelAlarm" />
 </androidx.constraintlayout.widget.ConstraintLayout>
