@@ -37,6 +37,8 @@
             android:enabled="true"
             android:exported="false" />
 
+        <receiver android:name=".notifications.CounterBroadcast"/>
+
     </application>
 
 </manifest>

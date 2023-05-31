@@ -14,6 +14,7 @@ import android.widget.TimePicker
 import android.widget.Toast
 import com.devyash.notificationsandalarmmanager.databinding.ActivityMainBinding
 import com.devyash.notificationsandalarmmanager.notifications.AlarmReciever
+import com.devyash.notificationsandalarmmanager.notifications.CounterNotificationService
 import com.devyash.notificationsandalarmmanager.others.Constants.CHANNELID
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -96,7 +97,6 @@ class MainActivity : AppCompatActivity() {
             // Perform any additional actions with the selected time
             Log.d("CALENDAR", calendar.get(Calendar.HOUR_OF_DAY).toString())
         }
-
 
     }
 
