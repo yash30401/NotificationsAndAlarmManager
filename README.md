@@ -102,8 +102,154 @@ The application consists of the following main components:
         Toast.makeText(this, "Alarm Set Successfully", Toast.LENGTH_SHORT).show()
 
     }
+    
+    private fun cancelAlarm() {
+        val intent = Intent(this, AlarmReciever::class.java)
+        pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        if (alarmManager == null) {
+            alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        }
+
+        alarmManager.cancel(pendingIntent)
+        Toast.makeText(this, "Alarm Cancel Successfully", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showAdvanceNotification(service: CounterNotificationService) {
+        service.showNotification(Counter.count)
+    }
 
 
 ```
+<li><b>AlarmReceiver:</b> A broadcast receiver that receives the alarm broadcast and triggers a notification.</li>
+
+``` kotlin
+  class AlarmReciever : BroadcastReceiver() {
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+
+        val intent= Intent(context!!,DestActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        val pendingIntent = PendingIntent.getActivity(context!!,0,intent,PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val builder = context?.let {
+            NotificationCompat.Builder(it,CHANNELID)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("Testing Title")
+                .setContentText("Testing Description of Notification App")
+                .setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .build()
+        }
+
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(123,builder)
+
+
+    }
+
+}
+
+
+```
+<li><b>CounterNotificationService:</b> A service responsible for displaying notifications with a counter.</li>
+
+``` kotlin
+ class CounterNotificationService(private val context: Context) {
+
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    fun showNotification(counter: Int) {
+
+        val intent = Intent(context, DestActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        val pendingIntent =
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        val incrementPendingIntent =
+            PendingIntent.getBroadcast(context, 0, Intent(context, CounterBroadcast::class.java),PendingIntent.FLAG_IMMUTABLE)
+        val notificationBuilder = NotificationCompat.Builder(
+            context, COUNTER_CHANNEL
+        ).setSmallIcon(R.drawable.baseline_notifications_24)
+            .setContentTitle("Counter Notification")
+            .setContentText("The Count is $counter")
+            .setContentIntent(pendingIntent)
+            .addAction(
+                R.drawable.baseline_notifications_24,
+                "Increase",
+                incrementPendingIntent
+                )
+            .build()
+
+        notificationManager.notify(111,notificationBuilder)
+
+    }
+
+}
+
+```
+<li><b>Counter:</b> A singleton object that keeps track of the counter value.</li>
+
+
+``` kotlin
+
+object Counter {
+    var count = 0
+}
+
+```
+<li><b>MyApp:</b> The application class that creates the notification channel.</li>
+
+``` kotlin
+
+class MyApp : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        createCounterNotificationChannel()
+    }
+
+    private fun createCounterNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelName: CharSequence = "CounterChannel"
+            val channelDesc = "Counter Notification Testing"
+            val notificationImportance = NotificationManager.IMPORTANCE_DEFAULT
+
+            val channel = NotificationChannel(
+                COUNTER_CHANNEL,
+                channelName,
+                notificationImportance
+            )
+            channel.description = channelDesc
+
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
